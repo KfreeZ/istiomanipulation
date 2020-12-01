@@ -1,0 +1,37 @@
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: python3
+  namespace: zkf2
+spec:
+  selector:
+    matchLabels:
+      app: python3
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: python3
+      annotations:
+        #sidecar.istio.io/logLevel: trace
+        sidecar.istio.io/userVolumeMount: '{"shared-data":{"mountPath":"/uds"}}'
+        #sidecar.istio.io/interceptionMode: NONE
+    spec:
+      containers:
+      - name: python3
+        image: python3-ip2unix-istioproxyusr:latest
+        securityContext:
+          runAsUser: 1337
+          runAsGroup: 1337
+        imagePullPolicy: Never
+        command: ["/bin/sh"]
+        args: ["-c", "ip2unix -r in,tcp,port=9999,path=/uds/in.socket python3 -m http.server 9999"]
+        volumeMounts:
+          - name: shared-data
+            mountPath: /uds
+      volumes:
+        - name: shared-data
+          emptyDir: {}
+      nodeSelector:
+        type: worker3
+

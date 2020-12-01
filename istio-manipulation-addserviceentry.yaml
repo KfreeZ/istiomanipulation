@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: mav-cluster
+  namespace: zkf2
+spec:
+  hosts:
+  - what.is.a.host
+  ports:
+  - number: 9999
+    name: mavService
+    protocol: HTTP
+  location: MESH_INTERNAL
+  resolution: STATIC
+  endpoints:
+    - address: 192.160.176.234

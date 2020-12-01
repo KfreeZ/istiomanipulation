@@ -1,0 +1,26 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: uds
+  namespace: zkf2
+spec:
+  #workloadSelector:
+  #  labels:
+  #    app: python3
+  ingress:
+  - port:
+      number: 9999
+      protocol: HTTP
+      name: udsin
+    defaultEndpoint: unix:///uds/in.socket
+  egress:
+  - port:
+      number: 0
+      protocol: HTTP
+      name: udsout
+    captureMode: NONE
+    bind: unix:///uds/out.socket
+    hosts: 
+    - "default/*"
+    - "./*"
+    - "zkf/*"

@@ -1,0 +1,52 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: uds-modicluster
+  namespace: zkf2
+spec:
+  configPatches:
+  # this is not working for tcp_proxy since header is not extracted in tcp layer
+  #- applyTo: CLUSTER
+  #  match:
+  #    context: SIDECAR_OUTBOUND
+  #    cluster:
+  #      name: "PassthroughCluster"
+  #  patch:
+  #    operation: MERGE
+  #    value:
+  #      original_dst_lb_config:
+  #        use_http_header: true 
+ 
+  # this is still not working to replace the item in a cluster
+  - applyTo: CLUSTER
+    match:
+      context: SIDECAR_OUTBOUND
+      cluster:
+        name: "outbound|9999||what.is.a.host"
+    patch:
+      operation: MERGE
+      value:
+        transport_socket_matches:
+        -
+  
+  - applyTo: CLUSTER
+    match:
+      context: SIDECAR_OUTBOUND
+      cluster:
+        name: "outbound|9999||what.is.a.host"
+    patch:
+      operation: INSERT_AFTER
+      value:
+        name: "hardcodecluster"
+        connect_timeout: "10s"
+        typed_config:
+          "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster"
+        load_assignment:
+          cluster_name: "hardcodecluster"
+          endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: "192.160.176.234"
+                    port_value: 9999
