@@ -1,5 +1,13 @@
 # Istio manipulation
 This is a reference for manipulating the envoy's configuration via Istio-pilot
+reference doc:
+https://istio.io/latest/docs/reference/config/networking/
+
+and grep the word you want to deal in the istio installation dir, like: 
+[root@centos8-vm istio-1.7.0]# grep -nr VIRTUAL_HOST ./
+Binary file ./bin/istioctl matches
+./manifests/charts/base/crds/crd-all.gen.yaml:2897:                      - VIRTUAL_HOST
+./manifests/charts/base/files/gen-istio-cluster.yaml:2899:                      - VIRTUAL_HOST
 
 ## Add a ServiceEntry
 This would create the virtual host, route, cluster, endpoint accordingly
