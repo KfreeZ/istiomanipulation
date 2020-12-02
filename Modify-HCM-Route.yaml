@@ -1,0 +1,23 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: modify-hcm-route
+  namespace: zkf2
+spec:
+  configPatches:
+  - applyTo: ROUTE_CONFIGURATION
+    match:
+      context: SIDECAR_OUTBOUND
+      listener:
+        name: "unix:///uds/out.socket_0"
+        filterChain:
+          filter: 
+            name: "envoy.http_connection_manager"
+    patch:
+      operation: MERGE
+      value:
+        route_config_name: "mav-cluster"
+
+
+
+

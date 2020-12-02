@@ -1,0 +1,36 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: replace-vhost
+  namespace: zkf2
+spec:
+  configPatches:
+  - applyTo: VIRTUAL_HOST
+    match:
+      routeConfiguration:
+        name: "unix:///uds/out.socket"
+        vhost:
+          name: "allow_any"
+    patch:
+      operation: REMOVE
+  - applyTo: VIRTUAL_HOST
+    match:
+      routeConfiguration:
+        name: "unix:///uds/out.socket"
+        vhost:
+          name: "httpbin.default.svc.cluster.local:8000"
+    patch:
+      operation: INSERT_BEFORE
+      value:
+        name: "hardcodeFWD"
+        domains:
+        - "*"
+        routes:
+        - name: "hardcodeFWD"
+          match:
+            prefix: "/"
+          route:
+            cluster: "hardcodecluster"
+
+
+
