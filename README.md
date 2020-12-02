@@ -4,10 +4,12 @@ reference doc:
 https://istio.io/latest/docs/reference/config/networking/
 
 and grep the word you want to deal in the istio installation dir, like: 
+```
 [root@centos8-vm istio-1.7.0]# grep -nr VIRTUAL_HOST ./
 Binary file ./bin/istioctl matches
 ./manifests/charts/base/crds/crd-all.gen.yaml:2897:                      - VIRTUAL_HOST
 ./manifests/charts/base/files/gen-istio-cluster.yaml:2899:                      - VIRTUAL_HOST
+```
 
 ## Add a ServiceEntry
 This would create the virtual host, route, cluster, endpoint accordingly
@@ -15,7 +17,7 @@ This would create the virtual host, route, cluster, endpoint accordingly
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
 metadata:
-  name: add-ServiceEntry
+  name: add-serviceentry
   namespace: zkf2
 spec:
   hosts:
@@ -113,7 +115,7 @@ In this case, it would
 apiVersion: networking.istio.io/v1alpha3
 kind: Sidecar
 metadata:
-  name: uds
+  name: modify-sidecar
   namespace: zkf2
 spec:
   ingress:
